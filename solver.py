@@ -10,7 +10,7 @@ ImageGrab.grab = partial(ImageGrab.grab, all_screens=True)
 
 WORDLE, NERDLEGAME, SQUABBLE = 0,1,2
 BOT, PERSON = 0,1
-pyautogui.PAUSE = 0.01
+pyautogui.PAUSE = 0.005
 
 legal_words = None  # global wordlist for game-specific checks
 
@@ -112,7 +112,7 @@ if __name__ == '__main__':
     grid = (130,53,245)
     firstGuess = 'crane'
     
-    game = input("reset Grid? ")
+    game = "y"
     if game == 'y' or game == "Y" or game == 'yes' or game == 'Yes' or game == 'YES':
         startx, starty, next, gridSpace = detectGrid(blank,grid)
         endy = starty + 5*(next + gridSpace)
@@ -124,10 +124,10 @@ if __name__ == '__main__':
         next = next + gridSpace
         print("next: " + str(next))
 
-    game = input("Would you like to play Squable? ")
+    #game = input("Would you like to play Squable? ")
     if game == 'y' or game == "Y" or game == 'yes' or game == 'Yes' or game == 'YES':
         GAME_MODE = SQUABBLE
-        game = input("Do you want the bot to play for you? ")
+        #game = input("Do you want the bot to play for you? ")
         if game == 'y' or game == "Y" or game == 'yes' or game == 'Yes' or game == 'YES':
             PLAYER = BOT
     else:
@@ -191,6 +191,7 @@ if __name__ == '__main__':
                         restartRound = True
                         break
             elif PLAYER == BOT:
+
                 typed = tree.recursiveFind(tree.head, 0, "", tree.notLocated)[1]
                 #print(typed)
                 for l in typed:
@@ -199,9 +200,11 @@ if __name__ == '__main__':
 
             print('Word entered: ' + typed)
             # detect if word went through
-            time.sleep(.2)
+            time.sleep(.4)
+
+
             myScreenshot = pyautogui.screenshot()
-            myScreenshot.save('afterGuess.png')
+            #myScreenshot.save('afterGuess.png')
             #print("guess " + str(guessCount))
             #print( endy - (5 - guessCount) * next)
 
@@ -223,7 +226,7 @@ if __name__ == '__main__':
                 pyautogui.press('backspace')
                 pyautogui.press('backspace')
                 tree.findAWordNoInput( typed, ['s'])
-                typed = tree.recursiveFind(tree.head, 0, "", tree.notLocated)[1]
+                continue
             else:
                 validWord = True
                 guessCount = guessCount + 1
@@ -236,11 +239,11 @@ if __name__ == '__main__':
             typed = ""
             continue
         
-        time.sleep(0.1)
+        #time.sleep(0.5)
         WORD_LEN = 5
 
-        myScreenshot = pyautogui.screenshot()
-        myScreenshot.save('screen.png')
+        #myScreenshot = pyautogui.screenshot()
+        #myScreenshot.save('screen.png')
         #myScreenshot = Image.open("test.png")
 
         #TODO: detect on which screen and the resolution, better key release events
@@ -254,7 +257,6 @@ if __name__ == '__main__':
             else:
                 for i in range(0, WORD_LEN):
                     pixel = myScreenshot.getpixel((startx + i * next, endy - pos * next))
-                    #print(pixel)
                     if pixel == green:
                         colors.append("G")
                         #print("is green")
@@ -266,11 +268,10 @@ if __name__ == '__main__':
                         #print("is wrong")
                 break
         #print(colors)
-
         if restartRound or colors == ['G','G','G','G','G']:
             print("== NEW WORD ==")
-            time.sleep(0.3)
             tree.findAWordNoInput( typed, ['q'])
+            time.sleep(0.5)
             guessCount = 0
             typed = ""
             continue
